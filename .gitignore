@@ -1,0 +1,35 @@
+# JetBrains IDEs (IntelliJ IDEA, GoLand, WebStorm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+tmp/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+#NodeJS libraries
+node_modules
+
