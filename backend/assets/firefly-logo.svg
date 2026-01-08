@@ -1,0 +1,120 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glow effect definition -->
+  <defs>
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFA500;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FF6B00;stop-opacity:0" />
+    </radialGradient>
+    
+    <radialGradient id="bodyGradient" cx="30%" cy="30%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E5C8A;stop-opacity:1" />
+    </radialGradient>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Outer glow circle -->
+  <circle cx="100" cy="100" r="45" fill="url(#glowGradient)" opacity="0.3" filter="url(#glow)">
+    <animate attributeName="r" values="45;50;45" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.3;0.5;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Left wing -->
+  <path d="M 85 80 Q 50 70, 45 85 Q 48 95, 85 90 Z" 
+        fill="#4FC3F7" 
+        opacity="0.7" 
+        filter="url(#softGlow)">
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      values="0 85 85; -15 85 85; 0 85 85"
+      dur="1s"
+      repeatCount="indefinite"/>
+  </path>
+  
+  <!-- Right wing -->
+  <path d="M 115 80 Q 150 70, 155 85 Q 152 95, 115 90 Z" 
+        fill="#4FC3F7" 
+        opacity="0.7" 
+        filter="url(#softGlow)">
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      values="0 115 85; 15 115 85; 0 115 85"
+      dur="1s"
+      repeatCount="indefinite"/>
+  </path>
+  
+  <!-- Body segments -->
+  <!-- Head -->
+  <ellipse cx="100" cy="75" rx="12" ry="15" fill="url(#bodyGradient)" stroke="#1E3A5F" stroke-width="1"/>
+  
+  <!-- Eyes -->
+  <circle cx="95" cy="72" r="3" fill="#FFD700" filter="url(#softGlow)">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="105" cy="72" r="3" fill="#FFD700" filter="url(#softGlow)">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Thorax -->
+  <ellipse cx="100" cy="95" rx="14" ry="18" fill="url(#bodyGradient)" stroke="#1E3A5F" stroke-width="1"/>
+  
+  <!-- Abdomen with glow -->
+  <ellipse cx="100" cy="120" rx="16" ry="25" fill="url(#bodyGradient)" stroke="#1E3A5F" stroke-width="1"/>
+  
+  <!-- Glowing tail light -->
+  <ellipse cx="100" cy="135" rx="14" ry="20" fill="#FFD700" opacity="0.9" filter="url(#glow)">
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <!-- Legs (simplified, futuristic lines) -->
+  <line x1="90" y1="95" x2="70" y2="110" stroke="#2E5C8A" stroke-width="2" stroke-linecap="round"/>
+  <line x1="90" y1="105" x2="65" y2="120" stroke="#2E5C8A" stroke-width="2" stroke-linecap="round"/>
+  <line x1="90" y1="115" x2="70" y2="130" stroke="#2E5C8A" stroke-width="2" stroke-linecap="round"/>
+  
+  <line x1="110" y1="95" x2="130" y2="110" stroke="#2E5C8A" stroke-width="2" stroke-linecap="round"/>
+  <line x1="110" y1="105" x2="135" y2="120" stroke="#2E5C8A" stroke-width="2" stroke-linecap="round"/>
+  <line x1="110" y1="115" x2="130" y2="130" stroke="#2E5C8A" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Antennae -->
+  <path d="M 95 65 Q 90 50, 85 45" stroke="#2E5C8A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="85" cy="45" r="2" fill="#4FC3F7" filter="url(#softGlow)"/>
+  
+  <path d="M 105 65 Q 110 50, 115 45" stroke="#2E5C8A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="115" cy="45" r="2" fill="#4FC3F7" filter="url(#softGlow)"/>
+  
+  <!-- Light particles around firefly -->
+  <circle cx="60" cy="90" r="2" fill="#FFD700" opacity="0.8">
+    <animate attributeName="cy" values="90;85;90" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="140" cy="100" r="2" fill="#FFD700" opacity="0.6">
+    <animate attributeName="cy" values="100;95;100" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="75" cy="120" r="1.5" fill="#FFA500" opacity="0.7">
+    <animate attributeName="cy" values="120;115;120" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="125" cy="130" r="1.5" fill="#FFA500" opacity="0.5">
+    <animate attributeName="cy" values="130;125;130" dur="2.8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.5;0.2;0.5" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+</svg>
