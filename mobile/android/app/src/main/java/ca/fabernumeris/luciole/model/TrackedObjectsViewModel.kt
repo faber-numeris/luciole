@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
 import ca.fabernumeris.luciole.repository.ITrackedObjectsRepository
-import ca.fabernumeris.luciole.repository.TrackedObjectsRepository
 import ca.fabernumeris.tracking.v1.Coordinate
 import ca.fabernumeris.tracking.v1.Position
 import dagger.hilt.android.lifecycle.HiltViewModel

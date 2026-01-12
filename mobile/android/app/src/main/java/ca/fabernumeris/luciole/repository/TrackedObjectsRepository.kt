@@ -6,7 +6,6 @@ import ca.fabernumeris.tracking.v1.Coordinate
 import ca.fabernumeris.tracking.v1.Position
 import kotlinx.coroutines.delay
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 interface ITrackedObjectsRepository {
