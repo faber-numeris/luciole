@@ -6,18 +6,21 @@ import ca.fabernumeris.tracking.v1.Coordinate
 import ca.fabernumeris.tracking.v1.Position
 import kotlinx.coroutines.delay
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
-@Singleton
-class TrackedObjectsRepositoryImpl @Inject constructor() {
+interface ITrackedObjectsRepository {
+    suspend fun getTrackedObjects(): List<TrackedObject>
+}
+
+
+class TrackedObjectsRepository @Inject constructor() : ITrackedObjectsRepository {
 
     private var currentPosition = Position("1234", Coordinate(
         DEFAULT_COORDINATES.latitude,
         DEFAULT_COORDINATES.longitude
     ))
 
-    suspend fun getTrackedObjects(): List<TrackedObject> {
+    override suspend fun getTrackedObjects(): List<TrackedObject> {
         delay(2000) // Simulate 2 seconds of network latency
 
         val trackedObjects = mutableListOf<TrackedObject>()
