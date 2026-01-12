@@ -3,7 +3,8 @@ package ca.fabernumeris.luciole.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
-import ca.fabernumeris.luciole.repository.TrackedObjectsRepositoryImpl
+import ca.fabernumeris.luciole.repository.ITrackedObjectsRepository
+import ca.fabernumeris.luciole.repository.TrackedObjectsRepository
 import ca.fabernumeris.tracking.v1.Coordinate
 import ca.fabernumeris.tracking.v1.Position
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TrackedObjectsViewModel @Inject constructor (
-    private val repository : TrackedObjectsRepositoryImpl
+    private val repository : ITrackedObjectsRepository
 
     ) : ViewModel() {
 
