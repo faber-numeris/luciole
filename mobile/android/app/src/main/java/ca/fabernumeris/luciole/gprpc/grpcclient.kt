@@ -16,8 +16,14 @@ interface IGRPCClient {
 
 class GRPCClient @Inject constructor() : IGRPCClient {
     private var channel: ManagedChannel? = null
+    private var stub: TrackingServiceGrpcKt.TrackingServiceCoroutineStub? = null
 
     override suspend fun connect(): TrackingServiceGrpcKt.TrackingServiceCoroutineStub {
+        // Return existing stub if already connected
+        if (stub != null && channel?.isShutdown == false) {
+            return stub!!
+        }
+
         // Parse the server URL to extract host and port
         val url = BuildConfig.SERVER_URL
         val isSecure = url.startsWith("https://")
@@ -36,10 +42,12 @@ class GRPCClient @Inject constructor() : IGRPCClient {
         channel = channelBuilder.build()
 
         // Create and return the stub
-        return TrackingServiceGrpcKt.TrackingServiceCoroutineStub(channel!!)
+        stub = TrackingServiceGrpcKt.TrackingServiceCoroutineStub(channel!!)
+        return stub!!
     }
 
     override fun shutdown() {
         channel?.shutdown()?.awaitTermination(5, TimeUnit.SECONDS)
+        stub = null
     }
 }
