@@ -28,9 +28,23 @@ class GRPCClient @Inject constructor() : IGRPCClient {
         val url = BuildConfig.SERVER_URL
         val isSecure = url.startsWith("https://")
         val hostAndPort = url.removePrefix("http://").removePrefix("https://")
-        val parts = hostAndPort.split(":")
-        val host = parts[0]
-        val port = if (parts.size > 1) parts[1].toInt() else if (isSecure) 443 else 80
+        
+        // Split by last colon to handle IPv6 addresses
+        val lastColonIndex = hostAndPort.lastIndexOf(':')
+        val host: String
+        val port: Int
+        
+        if (lastColonIndex > 0 && lastColonIndex < hostAndPort.length - 1) {
+            host = hostAndPort.substring(0, lastColonIndex)
+            try {
+                port = hostAndPort.substring(lastColonIndex + 1).toInt()
+            } catch (e: NumberFormatException) {
+                throw IllegalArgumentException("Invalid port in SERVER_URL: $url", e)
+            }
+        } else {
+            host = hostAndPort
+            port = if (isSecure) 443 else 80
+        }
 
         // Create a managed channel
         val channelBuilder = ManagedChannelBuilder.forAddress(host, port)
@@ -47,7 +61,14 @@ class GRPCClient @Inject constructor() : IGRPCClient {
     }
 
     override fun shutdown() {
-        channel?.shutdown()?.awaitTermination(5, TimeUnit.SECONDS)
+        channel?.let {
+            it.shutdown()
+            if (!it.awaitTermination(5, TimeUnit.SECONDS)) {
+                // Force shutdown if graceful shutdown times out
+                it.shutdownNow()
+                it.awaitTermination(1, TimeUnit.SECONDS)
+            }
+        }
         stub = null
     }
 }

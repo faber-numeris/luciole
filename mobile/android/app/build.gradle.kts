@@ -15,9 +15,6 @@ protobuf {
         artifact = libs.protobuf.protoc.get().toString()
     }
     plugins {
-        create("java") {
-            artifact = libs.protoc.gen.grpc.java.get().toString()
-        }
         create("grpc") {
             artifact = libs.protoc.gen.grpc.java.get().toString()
         }
@@ -28,9 +25,6 @@ protobuf {
     generateProtoTasks {
         all().forEach { task ->
             task.plugins {
-                create("java") {
-                    option("lite")
-                }
                 create("grpc") {
                     option("lite")
                 }
@@ -39,6 +33,9 @@ protobuf {
                 }
             }
             task.builtins {
+                create("java") {
+                    option("lite")
+                }
                 create("kotlin") {
                     option("lite")
                 }
