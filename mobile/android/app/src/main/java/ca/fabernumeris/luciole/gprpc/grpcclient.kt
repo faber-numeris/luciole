@@ -5,6 +5,7 @@ import ca.fabernumeris.tracking.v1.TrackingServiceClient
 import com.squareup.wire.GrpcClient
 import okhttp3.OkHttpClient
 import okhttp3.Protocol
+import javax.inject.Inject
 
 
 interface IGRPCClient {
@@ -12,7 +13,7 @@ interface IGRPCClient {
 }
 
 
-class GRPCClient : IGRPCClient {
+class GRPCClient @Inject constructor() : IGRPCClient {
     override suspend fun connect(): TrackingServiceClient {
         val grpcClient = GrpcClient.Builder()
             .client(

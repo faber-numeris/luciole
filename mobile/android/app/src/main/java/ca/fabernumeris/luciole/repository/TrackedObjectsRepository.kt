@@ -1,10 +1,10 @@
 package ca.fabernumeris.luciole.repository
 
 import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
+import ca.fabernumeris.luciole.gprpc.IGRPCClient
 import ca.fabernumeris.luciole.model.TrackedObject
 import ca.fabernumeris.tracking.v1.Coordinate
 import ca.fabernumeris.tracking.v1.Position
-import com.squareup.wire.GrpcClient
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -15,7 +15,7 @@ interface ITrackedObjectsRepository {
 
 
 class TrackedObjectsRepository @Inject constructor(
-    private val grpcClient: IGrpcClient
+    private val grpcClient: IGRPCClient
 ) : ITrackedObjectsRepository {
 
     private var currentPosition = Position("1234", Coordinate(
