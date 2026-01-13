@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Locale
 
 plugins {
     alias(libs.plugins.android.application)
@@ -44,6 +45,20 @@ protobuf {
     }
 }
 
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        afterEvaluate {
+            val capName =
+                variant.name.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                }
+            tasks.getByName("pre${capName}Build") {
+                dependsOn("generate${capName}Proto")
+            }
+        }
+    }
+}
+
 android {
     namespace = "ca.fabernumeris.luciole"
     compileSdk {
@@ -62,8 +77,11 @@ android {
 
     sourceSets {
         getByName("main") {
-            proto {
-                srcDir("proto")
+            java {
+                srcDir("build/generated/source/proto/main/java")
+                srcDir("build/generated/source/proto/main/grpc")
+                srcDir("build/generated/source/proto/main/kotlin")
+                srcDir("build/generated/source/proto/main/grpckt")
             }
         }
     }
