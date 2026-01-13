@@ -38,7 +38,8 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "SERVER_URL", "\"http://10.0.2.2:50051\"")
+            isMinifyEnabled = false
+            buildConfigField("String", "SERVER_URL", "\"http://localhost:50051\"")
         }
         release {
             isMinifyEnabled = false

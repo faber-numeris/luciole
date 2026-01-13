@@ -11,6 +11,8 @@ import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
 import ca.fabernumeris.luciole.constants.DEFAULT_STYLE_URL
 import ca.fabernumeris.luciole.model.TrackedObject
 import ca.fabernumeris.luciole.model.TrackedObjectsViewModel
+import ca.fabernumeris.luciole.repository.ITrackedObjectsRepository
+import ca.fabernumeris.luciole.repository.TrackedObjectsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import org.maplibre.android.MapLibre
 import org.maplibre.compose.camera.CameraPosition
@@ -21,10 +23,14 @@ import org.maplibre.compose.sources.GeoJsonData
 import org.maplibre.compose.sources.rememberGeoJsonSource
 import org.maplibre.compose.style.BaseStyle
 import org.maplibre.spatialk.geojson.Position
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var tracedObjectsRepository: ITrackedObjectsRepository
+
 
     private val trackedObjectsViewModel: TrackedObjectsViewModel by viewModels()
 
