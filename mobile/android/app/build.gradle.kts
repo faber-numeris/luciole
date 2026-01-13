@@ -128,9 +128,10 @@ dependencies {
     implementation(libs.maplibre.android)
     implementation(libs.maplibre.compose)
 
-    implementation(libs.protobuf.kotlin)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.protobuf.kotlin.lite)
     implementation(libs.grpc.okhttp)
-    implementation(libs.grpc.protobuf)
+    implementation(libs.grpc.protobuf.lite)
     implementation(libs.grpc.stub)
     implementation(libs.grpc.kotlin.stub)
 
