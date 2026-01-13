@@ -4,19 +4,43 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.wire)
+    alias(libs.plugins.protobuf)
     alias(libs.plugins.hilt.android)
     id("kotlin-kapt")
 
 }
 
-wire {
-    sourcePath {
-        srcDir("proto")
+protobuf {
+    protoc {
+        artifact = libs.protobuf.protoc.get().toString()
     }
-    kotlin {
-        android = true
-        javaInterop = true
+    plugins {
+        create("grpc") {
+            artifact = libs.protoc.gen.grpc.java.get().toString()
+        }
+        create("grpckt") {
+            artifact = libs.protoc.gen.grpc.kotlin.get().toString() + ":jdk8@jar"
+        }
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.plugins {
+                create("grpc") {
+                    option("lite")
+                }
+                create("grpckt") {
+                    option("lite")
+                }
+            }
+            task.builtins {
+                create("java") {
+                    option("lite")
+                }
+                create("kotlin") {
+                    option("lite")
+                }
+            }
+        }
     }
 }
 
@@ -34,6 +58,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        getByName("main") {
+            proto {
+                srcDir("proto")
+            }
+        }
     }
 
     buildTypes {
@@ -93,8 +125,12 @@ dependencies {
     implementation(libs.maplibre.android)
     implementation(libs.maplibre.compose)
 
-    implementation(libs.wire.runtime)
-    implementation(libs.wire.grpc.client)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.protobuf.kotlin.lite)
+    implementation(libs.grpc.okhttp)
+    implementation(libs.grpc.protobuf.lite)
+    implementation(libs.grpc.stub)
+    implementation(libs.grpc.kotlin.stub)
 
 
 }
