@@ -18,10 +18,15 @@ class TrackedObjectsRepository @Inject constructor(
     private val grpcClient: IGRPCClient
 ) : ITrackedObjectsRepository {
 
-    private var currentPosition = Position("1234", Coordinate(
-        DEFAULT_COORDINATES.latitude,
-        DEFAULT_COORDINATES.longitude
-    ))
+    private var currentPosition = Position.newBuilder()
+        .setVehicleId("1234")
+        .setCoordinate(
+            Coordinate.newBuilder()
+                .setLatitude(DEFAULT_COORDINATES.latitude)
+                .setLongitude(DEFAULT_COORDINATES.longitude)
+                .build()
+        )
+        .build()
 
     override suspend fun getTrackedObjects(): List<TrackedObject> {
         delay(2000) // Simulate 2 seconds of network latency
@@ -29,11 +34,17 @@ class TrackedObjectsRepository @Inject constructor(
         val trackedObjects = mutableListOf<TrackedObject>()
 
 
-        val latitude = currentPosition.coordinate?.latitude ?: DEFAULT_COORDINATES.latitude
-        val longitude = currentPosition.coordinate?.longitude ?: DEFAULT_COORDINATES.longitude
+        val latitude = currentPosition.coordinate.latitude
+        val longitude = currentPosition.coordinate.longitude
 
-        val newPosition = Position.Builder()
-            .coordinate(coordinate = Coordinate(latitude + 0.001, longitude + 0.001))
+        val newPosition = Position.newBuilder()
+            .setVehicleId(currentPosition.vehicleId)
+            .setCoordinate(
+                Coordinate.newBuilder()
+                    .setLatitude(latitude + 0.001)
+                    .setLongitude(longitude + 0.001)
+                    .build()
+            )
             .build()
 
         currentPosition = newPosition

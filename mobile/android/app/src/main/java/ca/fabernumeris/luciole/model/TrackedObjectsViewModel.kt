@@ -37,11 +37,13 @@ class TrackedObjectsViewModel @Inject constructor (
 
     fun listenForUpdates() {
 
-        val initialPosition = Position.Builder()
-            .coordinate(coordinate = Coordinate(
-                DEFAULT_COORDINATES.latitude,
-                DEFAULT_COORDINATES.longitude
-            ))
+        val initialPosition = Position.newBuilder()
+            .setCoordinate(
+                Coordinate.newBuilder()
+                    .setLatitude(DEFAULT_COORDINATES.latitude)
+                    .setLongitude(DEFAULT_COORDINATES.longitude)
+                    .build()
+            )
             .build()
         addTrackedObject("object-1", initialPosition)
 

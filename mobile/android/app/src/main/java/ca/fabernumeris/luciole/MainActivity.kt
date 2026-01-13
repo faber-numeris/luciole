@@ -84,7 +84,7 @@ private fun MarkerLayer(trackedObjects: Map<String, TrackedObject>) {
 
     // Create a FeatureCollection with all tracked objects
     val featuresJson = trackedObjects.values.joinToString(",") { obj ->
-        if (obj.position.coordinate == null){
+        if (!obj.position.hasCoordinate()){
             throw IllegalStateException("Object ${obj.id} has null coordinates")
         }
         val pos = Position(obj.position.coordinate.longitude, obj.position.coordinate.latitude)

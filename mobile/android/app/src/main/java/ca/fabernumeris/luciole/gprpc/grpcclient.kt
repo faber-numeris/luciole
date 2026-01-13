@@ -1,29 +1,45 @@
 package ca.fabernumeris.luciole.gprpc
 
 import ca.fabernumeris.luciole.BuildConfig
-import ca.fabernumeris.tracking.v1.TrackingServiceClient
-import com.squareup.wire.GrpcClient
-import okhttp3.OkHttpClient
-import okhttp3.Protocol
+import ca.fabernumeris.tracking.v1.TrackingServiceGrpcKt
+import io.grpc.ManagedChannel
+import io.grpc.ManagedChannelBuilder
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
 interface IGRPCClient {
-    suspend fun connect() : TrackingServiceClient
+    suspend fun connect() : TrackingServiceGrpcKt.TrackingServiceCoroutineStub
+    fun shutdown()
 }
 
 
 class GRPCClient @Inject constructor() : IGRPCClient {
-    override suspend fun connect(): TrackingServiceClient {
-        val grpcClient = GrpcClient.Builder()
-            .client(
-                OkHttpClient.Builder()
-                    .protocols(listOf(Protocol.H2_PRIOR_KNOWLEDGE))
-                    .build())
-            .baseUrl(BuildConfig.SERVER_URL)
-            .build()
-        val trackingServiceClient = grpcClient.create(service = TrackingServiceClient::class)
+    private var channel: ManagedChannel? = null
 
-        return trackingServiceClient
+    override suspend fun connect(): TrackingServiceGrpcKt.TrackingServiceCoroutineStub {
+        // Parse the server URL to extract host and port
+        val url = BuildConfig.SERVER_URL
+        val isSecure = url.startsWith("https://")
+        val hostAndPort = url.removePrefix("http://").removePrefix("https://")
+        val parts = hostAndPort.split(":")
+        val host = parts[0]
+        val port = if (parts.size > 1) parts[1].toInt() else if (isSecure) 443 else 80
+
+        // Create a managed channel
+        val channelBuilder = ManagedChannelBuilder.forAddress(host, port)
+        
+        if (!isSecure) {
+            channelBuilder.usePlaintext()
+        }
+        
+        channel = channelBuilder.build()
+
+        // Create and return the stub
+        return TrackingServiceGrpcKt.TrackingServiceCoroutineStub(channel!!)
+    }
+
+    override fun shutdown() {
+        channel?.shutdown()?.awaitTermination(5, TimeUnit.SECONDS)
     }
 }
