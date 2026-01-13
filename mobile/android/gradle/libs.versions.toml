@@ -13,10 +13,10 @@ maplibre = "12.3.1"
 maplibre-compose = "0.12.1"
 hilt = "2.57.2"
 javapoet = "1.13.0"
-protobuf = "4.29.3"
-grpc = "1.71.0"
+protobuf = "4.33.4"
+grpc = "1.78.0"
 grpc-kotlin = "1.5.0"
-protobuf-plugin = "0.9.4"
+protobuf-plugin = "0.9.6"
 
 
 [libraries]

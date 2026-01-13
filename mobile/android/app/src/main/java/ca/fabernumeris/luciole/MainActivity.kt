@@ -12,7 +12,6 @@ import ca.fabernumeris.luciole.constants.DEFAULT_STYLE_URL
 import ca.fabernumeris.luciole.model.TrackedObject
 import ca.fabernumeris.luciole.model.TrackedObjectsViewModel
 import ca.fabernumeris.luciole.repository.ITrackedObjectsRepository
-import ca.fabernumeris.luciole.repository.TrackedObjectsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import org.maplibre.android.MapLibre
 import org.maplibre.compose.camera.CameraPosition
