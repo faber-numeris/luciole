@@ -3,9 +3,10 @@ package ca.fabernumeris.luciole.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
-import ca.fabernumeris.luciole.repository.ITrackedObjectsRepository
 import ca.fabernumeris.tracking.v1.Coordinate
 import ca.fabernumeris.tracking.v1.Position
+import ca.fabernumeris.tracking.v1.SubscribeLocationRequest
+import ca.fabernumeris.tracking.v1.TrackingServiceGrpcKt
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,10 +15,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TrackedObjectsViewModel @Inject constructor (
-    private val repository : ITrackedObjectsRepository
-
-    ) : ViewModel() {
+class TrackedObjectsViewModel @Inject constructor(
+    private val trackingStub: TrackingServiceGrpcKt.TrackingServiceCoroutineStub
+) : ViewModel() {
 
     private val _trackedObjects = MutableStateFlow<Map<String, TrackedObject>>(emptyMap())
 
@@ -35,7 +35,11 @@ class TrackedObjectsViewModel @Inject constructor (
         _trackedObjects.value -= id
     }
 
-    fun listenForUpdates() {
+    init {
+        listenForUpdates("client-id-2026")
+    }
+
+    fun listenForUpdates(clientID: String) {
 
         val initialPosition = Position.newBuilder()
             .setCoordinate(
@@ -48,9 +52,21 @@ class TrackedObjectsViewModel @Inject constructor (
         addTrackedObject("object-1", initialPosition)
 
         viewModelScope.launch {
-            while (true) {
-                val objs = repository.getTrackedObjects()
-                updateObjectPosition("object-1", objs[0].position)
+            val request = SubscribeLocationRequest.newBuilder()
+                .setClientId(clientID)
+                .build()
+
+            try {
+                // Collect the server-side stream
+                trackingStub.subscribeLocation(request).collect { response ->
+                    response.positionsList.forEach {
+                        updateObjectPosition(it.vehicleId, it)
+                    }
+
+                }
+            } catch (e: Exception) {
+                // Handle gRPC errors (e.g., connection loss) here
+                e.printStackTrace()
             }
         }
     }

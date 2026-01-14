@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package tracking.v1;
+
+option go_package = "tracking/v1";
+option java_package = "ca.fabernumeris.tracking.v1";
+option java_multiple_files = true;
+option java_outer_classname = "TrackingProto";
+
+import "google/protobuf/timestamp.proto";
+
+message SubscribeLocationRequest {
+  string client_id = 1;
+}
+
+message Coordinate {
+  double latitude = 1;
+  double longitude = 2;
+  double speed_mps = 3;
+  double heading_deg = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+message Position {
+  string vehicle_id = 1;
+  Coordinate coordinate = 2;
+}
+
+message SubscribeLocationResponse {
+  repeated Position positions = 1;
+}
+
+service TrackingService {
+  rpc SubscribeLocation(SubscribeLocationRequest) returns (stream SubscribeLocationResponse);
+}

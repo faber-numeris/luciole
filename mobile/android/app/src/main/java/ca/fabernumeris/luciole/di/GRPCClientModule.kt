@@ -1,20 +1,33 @@
 package ca.fabernumeris.luciole.di
 
-import ca.fabernumeris.luciole.gprpc.GRPCClient
-import ca.fabernumeris.luciole.gprpc.IGRPCClient
-import dagger.Binds
+import ca.fabernumeris.luciole.BuildConfig
+import ca.fabernumeris.tracking.v1.TrackingServiceGrpcKt
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.grpc.ManagedChannel
+import io.grpc.ManagedChannelBuilder
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class GRPCClientModule {
-    @Binds
+object GrpcModule {
+
+    @Provides
     @Singleton
-    abstract fun bindGRPCClient(
-        grpcClient: GRPCClient
-    ): IGRPCClient
+    fun provideChannel(): ManagedChannel {
+        return ManagedChannelBuilder.forAddress(BuildConfig.SERVER_HOST, BuildConfig.SERVER_PORT)
+            .usePlaintext() // Use TLS in production
+            .keepAliveTime(30, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTrackingStub(channel: ManagedChannel): TrackingServiceGrpcKt.TrackingServiceCoroutineStub {
+        return TrackingServiceGrpcKt.TrackingServiceCoroutineStub(channel)
+    }
 }

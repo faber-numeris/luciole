@@ -10,7 +10,7 @@ option java_outer_classname = "TrackingProto";
 import "google/protobuf/timestamp.proto";
 
 message SubscribeLocationRequest {
-  string vehicle_id = 1;     // bus_id, pet_id, tracker_id, etc.
+  string client_id = 1;
 }
 
 message Coordinate {
