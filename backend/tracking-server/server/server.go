@@ -2,47 +2,44 @@ package server
 
 import (
 	"log"
+	"log/slog"
 	"net"
+	"strconv"
 
+	"github.com/faber-numeris/luciole/tracking-server/configuration"
 	v1 "github.com/faber-numeris/luciole/tracking-server/grpc/tracking/v1"
 	"github.com/faber-numeris/luciole/tracking-server/service"
 	"google.golang.org/grpc"
 )
 
-type Server interface {
+type SrvInterface interface {
 	Start() error
 }
 
-type Impl struct {
+type Server struct {
+	config configuration.AppConfigurationInterface
 }
 
-func NewServer() Server {
-	return &Impl{}
+func NewServer(configuration configuration.AppConfigurationInterface) SrvInterface {
+	return &Server{
+		config: configuration,
+	}
 }
 
-func (s *Impl) Start() error {
-	baseLis, err := net.Listen("tcp", "0.0.0.0:50051")
+func (s *Server) Start() error {
+	slog.Info("Starting SrvInterface")
+	address := net.JoinHostPort(s.config.GetHost(), strconv.Itoa(s.config.GetPort()))
+	baseListener, err := net.Listen("tcp", address)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		return err
 	}
 
-	lis := &ConnTrackingListener{
-		Listener: baseLis,
-		onConnect: func(c net.Conn) {
-			log.Printf("client connected: %s", c.RemoteAddr())
-		},
-		onDisconnect: func(c net.Conn) {
-			log.Printf("client disconnected: %s", c.RemoteAddr())
-		},
-	}
+	connectionListener := NewConnectionListener(baseListener)
 	grpcServer := grpc.NewServer()
+	v1.RegisterTrackingServiceServer(grpcServer, &service.TrackingService{})
+	slog.Info("Starting gRPC Server", slog.String("address", address))
 
-	srv := &service.TrackingServiceServerImpl{}
-
-	v1.RegisterTrackingServiceServer(grpcServer, srv)
-	log.Println("gRPC server listening on :50051")
-
-	if err := grpcServer.Serve(lis); err != nil {
+	if err := grpcServer.Serve(connectionListener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 

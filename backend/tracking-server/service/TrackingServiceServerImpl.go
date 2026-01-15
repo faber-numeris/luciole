@@ -1,18 +1,30 @@
 package service
 
-import v1 "github.com/faber-numeris/luciole/tracking-server/grpc/tracking/v1"
+import (
+	"log/slog"
 
-type TrackingServiceServerImpl struct {
+	v1 "github.com/faber-numeris/luciole/tracking-server/grpc/tracking/v1"
+)
+
+var _ v1.TrackingServiceServer = &TrackingService{}
+
+type TrackingServiceInterface = v1.TrackingServiceServer
+
+type TrackingService struct {
 	v1.UnimplementedTrackingServiceServer
 }
 
-var _ v1.TrackingServiceServer = &TrackingServiceServerImpl{}
+func NewTrackingService() TrackingServiceInterface {
+	return &TrackingService{}
+}
 
 // SubscribeLocation implements the SubscribeLocation method of the TrackingServiceServer interface.
-func (s *TrackingServiceServerImpl) SubscribeLocation(
+func (s *TrackingService) SubscribeLocation(
 	req *v1.SubscribeLocationRequest,
 	stream v1.TrackingService_SubscribeLocationServer,
 ) error {
+
+	slog.Info("Client subscribed to location updates", "request", req)
 
 	positions := make([]*v1.Position, 0)
 
