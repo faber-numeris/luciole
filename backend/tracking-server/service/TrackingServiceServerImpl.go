@@ -2,6 +2,7 @@ package service
 
 import (
 	"log/slog"
+	"time"
 
 	v1 "github.com/faber-numeris/luciole/tracking-server/grpc/tracking/v1"
 )
@@ -14,10 +15,6 @@ type TrackingService struct {
 	v1.UnimplementedTrackingServiceServer
 }
 
-func NewTrackingService() TrackingServiceInterface {
-	return &TrackingService{}
-}
-
 // SubscribeLocation implements the SubscribeLocation method of the TrackingServiceServer interface.
 func (s *TrackingService) SubscribeLocation(
 	req *v1.SubscribeLocationRequest,
@@ -26,20 +23,33 @@ func (s *TrackingService) SubscribeLocation(
 
 	slog.Info("Client subscribed to location updates", "request", req)
 
-	positions := make([]*v1.Position, 0)
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
-	positions = append(positions, &v1.Position{
-		VehicleId:  "1234",
-		Coordinate: &v1.Coordinate{Latitude: 37.7749, Longitude: -122.4194},
-	})
+	ctx := stream.Context()
 
-	// Example: Send a location update to the client
-	locationUpdate := &v1.LocationUpdateResponse{
-		Positions: positions,
-		// Populate with your location data
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Info("client disconnected or context canceled", "err", ctx.Err())
+			return ctx.Err()
+		case <-ticker.C:
+			// build/update positions for this tick
+			positions := []*v1.Position{
+				{
+					VehicleId:  "1234",
+					Coordinate: &v1.Coordinate{Latitude: 37.7749, Longitude: -122.4194},
+				},
+			}
+
+			locationUpdate := &v1.LocationUpdateResponse{
+				Positions: positions,
+			}
+
+			if err := stream.Send(locationUpdate); err != nil {
+				// Send error -> stop streaming
+				return err
+			}
+		}
 	}
-	if err := stream.Send(locationUpdate); err != nil {
-		return err
-	}
-	return nil
 }

@@ -1,5 +1,6 @@
 package ca.fabernumeris.luciole.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
@@ -28,6 +29,7 @@ class TrackedObjectsViewModel @Inject constructor(
     }
 
     fun updateObjectPosition(id: String, newPosition: Position) {
+        Log.d("TrackedObjectsViewModel", "Updating position for object $id to $newPosition")
         _trackedObjects.value += (id to TrackedObject(id, newPosition))
     }
 
