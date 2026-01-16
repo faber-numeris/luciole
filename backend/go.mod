@@ -3,6 +3,8 @@ module github.com/faber-numeris/luciole
 go 1.24.4
 
 require (
+	github.com/caarlos0/env/v11 v11.3.1
+	github.com/oklog/ulid/v2 v2.1.1
 	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.11
 )

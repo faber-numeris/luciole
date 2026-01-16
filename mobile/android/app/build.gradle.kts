@@ -89,7 +89,8 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            buildConfigField("String", "SERVER_URL", "\"http://localhost:50051\"")
+            buildConfigField("String", "SERVER_HOST", "\"10.0.2.2\"")
+            buildConfigField("Integer", "SERVER_PORT", "50051")
         }
         release {
             isMinifyEnabled = false
@@ -97,7 +98,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "SERVER_URL", "\"https://api.luciole.ca\"")
+            buildConfigField("String", "SERVER_HOST", "\"api.luciole.ca\"")
+            buildConfigField("Integer", "SERVER_PORT", "50051")
         }
     }
     compileOptions {
