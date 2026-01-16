@@ -26,10 +26,10 @@ message Position {
   Coordinate coordinate = 2;
 }
 
-message SubscribeLocationResponse {
+message LocationUpdateResponse {
   repeated Position positions = 1;
 }
 
 service TrackingService {
-  rpc SubscribeLocation(SubscribeLocationRequest) returns (stream SubscribeLocationResponse);
+  rpc SubscribeLocation(SubscribeLocationRequest) returns (stream LocationUpdateResponse);
 }

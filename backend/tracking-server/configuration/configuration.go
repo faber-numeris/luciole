@@ -6,7 +6,7 @@ import (
 )
 
 type AppConfigurationInterface interface {
-	ServerConfigurationInteface
+	ServerConfigurationInterface
 }
 
 type AppConfiguration struct {

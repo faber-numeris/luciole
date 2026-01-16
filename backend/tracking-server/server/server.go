@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"log/slog"
 	"net"
 	"strconv"
@@ -40,7 +39,8 @@ func (s *Server) Start() error {
 	slog.Info("Starting gRPC Server", slog.String("address", address))
 
 	if err := grpcServer.Serve(connectionListener); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		slog.Error("Failed to start gRPC Server", "err", err)
+		return err
 	}
 
 	return nil

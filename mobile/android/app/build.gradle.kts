@@ -99,7 +99,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "SERVER_HOST", "\"api.luciole.ca\"")
-            buildConfigField("String", "SERVER_PORT", "\"50051\"")
+            buildConfigField("Integer", "SERVER_PORT", "50051")
         }
     }
     compileOptions {

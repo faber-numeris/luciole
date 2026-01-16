@@ -46,12 +46,16 @@ func (cl *ConnectionListener) AddConnection(id string, connection net.Conn) {
 
 func (cl *ConnectionListener) RemoveConnection(id string) {
 	cl.mu.Lock()
-	err := cl.connections[id].Close()
-	if err != nil {
-		slog.Error("The connections couldn't be closed", "err", err.Error())
+	conn, exists := cl.connections[id]
+	if !exists {
+		cl.mu.Unlock()
+		return
 	}
 	delete(cl.connections, id)
 	cl.mu.Unlock()
+	if err := conn.Close(); err != nil {
+		slog.Error("The connection couldn't be closed", "err", err)
+	}
 }
 
 func (cl *ConnectionListener) Accept() (net.Conn, error) {

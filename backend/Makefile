@@ -29,4 +29,4 @@ proto: $(PROTO_FILES)
 
 # Remove generated files
 clean:
-	-@rm -f proto/v1/*_pb.go proto/v1/*_grpc.pb.go
+	-@rm -rf $(GEN_DIR)/tracking

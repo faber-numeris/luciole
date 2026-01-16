@@ -19,11 +19,18 @@ object GrpcModule {
     @Provides
     @Singleton
     fun provideChannel(): ManagedChannel {
-        return ManagedChannelBuilder.forAddress(BuildConfig.SERVER_HOST, BuildConfig.SERVER_PORT)
-            .usePlaintext() // Use TLS in production
+        val builder =
+            ManagedChannelBuilder.forAddress(BuildConfig.SERVER_HOST, BuildConfig.SERVER_PORT)
+        if (BuildConfig.DEBUG) {
+            builder.usePlaintext()
+        } else {
+            builder.useTransportSecurity()
+        }
+        return builder
             .keepAliveTime(30, TimeUnit.SECONDS)
             .build()
     }
+
 
     @Provides
     @Singleton
