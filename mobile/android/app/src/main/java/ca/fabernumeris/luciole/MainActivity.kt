@@ -53,7 +53,6 @@ fun MainMap(trackedObjects: Map<String, TrackedObject>) {
         cameraState = cameraState,
     ){
         MarkerLayer(trackedObjects)
-
     }
 }
 
