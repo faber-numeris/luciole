@@ -6,6 +6,7 @@ import (
 	"github.com/faber-numeris/luciole/tracking-server/configuration"
 	"github.com/faber-numeris/luciole/tracking-server/repository"
 	"github.com/faber-numeris/luciole/tracking-server/server"
+	"github.com/faber-numeris/luciole/tracking-server/service"
 )
 
 func ProvideConfiguration() configuration.AppConfigurationInterface {
@@ -13,10 +14,16 @@ func ProvideConfiguration() configuration.AppConfigurationInterface {
 	return configuration.NewAppConfiguration()
 }
 
+func ProvideTrackingService(dataRepo repository.Interface) service.TrackingServiceInterface {
+	slog.Info("Providing TrackingService instance via DI...")
+	return service.NewTrackingService(dataRepo)
+}
+
 func ProvideServer() server.SrvInterface {
 	slog.Info("Providing SrvInterface instance via DI...")
 	dataRepo := ProvideRepository(ProvideConfiguration())
-	return server.NewServer(ProvideConfiguration(), dataRepo)
+	trackingService := ProvideTrackingService(dataRepo)
+	return server.NewServer(ProvideConfiguration(), dataRepo, trackingService)
 }
 
 func ProvideRepository(datasource configuration.DataSourceConfigurationInterface) repository.Interface {
