@@ -6,11 +6,41 @@ import (
 	_ "embed"
 	"encoding/xml"
 	"io"
+	"strconv"
 	"strings"
+	"time"
+
+	"github.com/faber-numeris/luciole/tracking-server/model"
 )
 
 //go:embed resources/qc2mtl.kmz
 var Qc2MtlKmz []byte
+
+func LoadSimulatedPath() ([]model.Position, error) {
+	kml, err := readSimPath()
+	if err != nil {
+		return nil, err
+	}
+
+	if kml != nil {
+		var coordinates []model.Position
+		for _, placemark := range kml.Document.Placemarks {
+			coordStrings := extractCoordinatesFromPlacemark(placemark)
+			for _, coordString := range coordStrings {
+				coord, parseErr := parseCoordinateString(coordString)
+				if parseErr != nil {
+					return nil, parseErr
+				}
+				coordinates = append(coordinates, coord)
+			}
+		}
+
+		return coordinates, nil
+	}
+
+	return nil, nil
+
+}
 
 func readKMLBinary(file *zip.File) (string, error) {
 	rc, err := file.Open()
@@ -26,7 +56,7 @@ func readKMLBinary(file *zip.File) (string, error) {
 	return buf.String(), nil
 }
 
-func ReadSimPath() (*KML, error) {
+func readSimPath() (*KML, error) {
 	zr, err := zip.NewReader(bytes.NewReader(Qc2MtlKmz), int64(len(Qc2MtlKmz)))
 	if err != nil {
 		panic(err)
@@ -49,4 +79,35 @@ func ReadSimPath() (*KML, error) {
 	}
 
 	return nil, nil
+}
+
+func extractCoordinatesFromPlacemark(placemark *Placemark) []string {
+	if placemark.LineString != nil {
+		coords := strings.Replace(placemark.LineString.Coordinates, " ", "", -1)[1:]
+		return strings.Split(coords, "\n")[1:]
+	}
+	return nil
+}
+
+func parseCoordinateString(coordString string) (model.Position, error) {
+	parts := strings.Split(coordString, ",")
+	if len(parts) < 2 {
+		return model.Position{}, nil
+	}
+
+	var longitude, latitude float64
+	var err error
+
+	if longitude, err = strconv.ParseFloat(parts[0], 64); err != nil {
+		return model.Position{}, err
+	}
+	if latitude, err = strconv.ParseFloat(parts[1], 64); err != nil {
+		return model.Position{}, err
+	}
+
+	return model.Position{
+		Latitude:  latitude,
+		Longitude: longitude,
+		Timestamp: time.Now(),
+	}, nil
 }
