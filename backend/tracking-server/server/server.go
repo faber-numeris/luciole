@@ -17,17 +17,20 @@ type SrvInterface interface {
 }
 
 type Server struct {
-	config         configuration.AppConfigurationInterface
-	dataRepository repository.Interface
+	config          configuration.AppConfigurationInterface
+	dataRepository  repository.Interface
+	trackingService service.TrackingServiceInterface
 }
 
 func NewServer(
 	configuration configuration.AppConfigurationInterface,
 	repo repository.Interface,
+	trackingService service.TrackingServiceInterface,
 ) SrvInterface {
 	return &Server{
-		config:         configuration,
-		dataRepository: repo,
+		config:          configuration,
+		dataRepository:  repo,
+		trackingService: trackingService,
 	}
 }
 
@@ -41,9 +44,7 @@ func (s *Server) Start() error {
 
 	connectionListener := NewConnectionListener(baseListener)
 	grpcServer := grpc.NewServer()
-	// TODO: create the provider for the service on the DI container and inject it on the server
-	srv := service.NewTrackingService(s.dataRepository)
-	v1.RegisterTrackingServiceServer(grpcServer, srv)
+	v1.RegisterTrackingServiceServer(grpcServer, s.trackingService)
 	slog.Info("Starting gRPC Server", slog.String("address", address))
 
 	if err := grpcServer.Serve(connectionListener); err != nil {
