@@ -5,36 +5,36 @@ Pragmatic Tracking System
 
 Luciole is a full-stack tracking system with the following core modules:
 
-### 📱 luciole-ui
-Mobile application built with **React Native** and **Expo**.
-- Cross-platform mobile app (iOS & Android)
-- Modern React Native architecture
-- Expo for rapid development and deployment
+### 📱 mobile
+Native Android application built with **Kotlin**.
+- Native Android app
+- Modern Jetpack Compose UI
+- gRPC client for backend communication
 
-[View luciole-ui README](./luciole-ui/README.md)
+[View mobile app](./mobile/android/)
 
-### 🚀 luciole-backend
+### 🚀 backend
 Backend API server built with **Go**.
-- RESTful API
+- gRPC API
 - PostgreSQL database
 - Redis caching layer
 - High-performance Go backend
 
-[View luciole-backend README](./luciole-backend/README.md)
+[View backend README](./backend/README.md)
 
 ## Development Environment
 
-Both modules are optimized for development on **Linux** using the **JetBrains ecosystem**:
-- **WebStorm** or **IntelliJ IDEA Ultimate** for React Native development
-- **GoLand** for Go backend development
+Both modules are optimized for development on **Linux**:
+- **Android Studio** for Kotlin Android development
+- **GoLand** or **IntelliJ IDEA** for Go backend development
 
 ## Quick Start
 
 ### Prerequisites
-- Node.js 18+ (for luciole-ui)
-- Go 1.21+ (for luciole-backend)
+- Android Studio (for mobile app development)
+- JDK 17+ (for Android development)
+- Go 1.21+ (for backend)
 - PostgreSQL 15+ (for database)
-- JetBrains IDE (WebStorm/GoLand)
 
 ### Getting Started
 
@@ -46,20 +46,21 @@ Both modules are optimized for development on **Linux** using the **JetBrains ec
 
 2. **Set up the backend**
    ```bash
-   cd luciole-backend
-   # Follow instructions in luciole-backend/README.md
+   cd backend
+   # Follow instructions in backend/README.md
    ```
 
 3. **Set up the mobile app**
    ```bash
-   cd luciole-ui
-   # Follow instructions in luciole-ui/README.md
+   cd mobile/android
+   # Open the project in Android Studio
+   # Build and run the app
    ```
 
 ## Documentation
 
-- [Frontend Setup Guide](./luciole-ui/README.md) - Complete React Native setup with Expo
-- [Backend Setup Guide](./luciole-backend/README.md) - Complete Go backend setup
+- [Mobile App](./mobile/android/) - Native Kotlin Android app
+- [Backend Setup Guide](./backend/README.md) - Complete Go backend setup
 
 ## Contributing
 
