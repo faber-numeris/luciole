@@ -5,6 +5,8 @@ import (
 	"time"
 
 	v1 "github.com/faber-numeris/luciole/tracking-server/grpc/tracking/v1"
+	"github.com/faber-numeris/luciole/tracking-server/repository"
+	"github.com/faber-numeris/luciole/tracking-server/tools/types"
 )
 
 var _ v1.TrackingServiceServer = &TrackingService{}
@@ -13,6 +15,13 @@ type TrackingServiceInterface = v1.TrackingServiceServer
 
 type TrackingService struct {
 	v1.UnimplementedTrackingServiceServer
+	dataRepository repository.Interface
+}
+
+func NewTrackingService(dataRepository repository.Interface) *TrackingService {
+	return &TrackingService{
+		dataRepository: dataRepository,
+	}
 }
 
 // SubscribeLocation implements the SubscribeLocation method of the TrackingServiceServer interface.
@@ -34,11 +43,20 @@ func (s *TrackingService) SubscribeLocation(
 			slog.Info("client disconnected or context canceled", "err", ctx.Err())
 			return ctx.Err()
 		case <-ticker.C:
+
+			data, err := s.dataRepository.FetchData(stream.Context(), types.ULID(req.ClientId))
+			if err != nil {
+				slog.Error("failed to fetch data from repository", "err", err)
+			}
+
 			// build/update positions for this tick
 			positions := []*v1.Position{
 				{
-					VehicleId:  "1234",
-					Coordinate: &v1.Coordinate{Latitude: 37.7749, Longitude: -122.4194},
+					VehicleId: data.VehicleID,
+					Coordinate: &v1.Coordinate{
+						Latitude:  data.Latitude,
+						Longitude: data.Longitude,
+					},
 				},
 			}
 
