@@ -30,7 +30,8 @@ func ProvideRepository(datasource configuration.DataSourceConfigurationInterface
 				err  error
 			)
 			if repo, err = repository.NewSimulatorRepository(); err != nil {
-				panic("Failed to create Simulator Repository, falling back to Default Repository")
+				slog.Error("Failed to create Simulator Repository, falling back to Default Repository", "err", err)
+				return repository.NewDefaultRepository()
 			}
 			return repo
 		}

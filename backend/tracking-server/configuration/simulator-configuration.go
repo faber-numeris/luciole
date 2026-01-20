@@ -5,7 +5,7 @@ type DataSourceConfigurationInterface interface {
 }
 
 type DatasourceConfiguration struct {
-	SimulatorEnabled bool `env:"SIMULATION" envDefault:"true"`
+	SimulatorEnabled bool `env:"SIMULATION" envDefault:"false"`
 }
 
 func (c DatasourceConfiguration) IsSimulatorEnabled() bool {

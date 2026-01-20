@@ -25,7 +25,7 @@ func NewSimulatorRepository() (*SimulatorRepository, error) {
 
 var _ Interface = (*SimulatorRepository)(nil)
 
-func (s SimulatorRepository) FetchData(ctx context.Context, clientID types.ULID) (model.Position, error) {
+func (s *SimulatorRepository) FetchData(_ context.Context, clientID types.ULID) (model.Position, error) {
 	pos := s.positions[s.currentIndex]
 	s.currentIndex = s.currentIndex + 1
 

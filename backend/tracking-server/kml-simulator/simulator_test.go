@@ -16,7 +16,7 @@ func TestReadSimPath(t *testing.T) {
 
 func TestExtractCoordinatesFromPlacemark(t *testing.T) {
 	kml, err := readSimPath()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotEmpty(t, kml)
 
 	var lineStringPlacemark *Placemark
@@ -36,7 +36,7 @@ func TestParseCoordinateString(t *testing.T) {
 
 	coordStr := "-71.207981,46.813878,0"
 	coord, err := parseCoordinateString(coordStr)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.InDelta(t, coord.Latitude, 46.813878, 0.000001)
 	assert.InDelta(t, coord.Longitude, -71.207981, 0.000001)
 }

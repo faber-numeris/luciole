@@ -5,6 +5,7 @@ import (
 	"bytes"
 	_ "embed"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -92,16 +93,16 @@ func extractCoordinatesFromPlacemark(placemark *Placemark) []string {
 func parseCoordinateString(coordString string) (model.Position, error) {
 	parts := strings.Split(coordString, ",")
 	if len(parts) < 2 {
-		return model.Position{}, nil
+		return model.Position{}, fmt.Errorf("invalid coordinate: %q", coordString)
 	}
 
 	var longitude, latitude float64
 	var err error
 
-	if longitude, err = strconv.ParseFloat(parts[0], 64); err != nil {
+	if longitude, err = strconv.ParseFloat(strings.TrimSpace(parts[0]), 64); err != nil {
 		return model.Position{}, err
 	}
-	if latitude, err = strconv.ParseFloat(parts[1], 64); err != nil {
+	if latitude, err = strconv.ParseFloat(strings.TrimSpace(parts[1]), 64); err != nil {
 		return model.Position{}, err
 	}
 
