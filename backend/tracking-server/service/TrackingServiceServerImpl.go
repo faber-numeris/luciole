@@ -32,7 +32,7 @@ func (s *TrackingService) SubscribeLocation(
 
 	slog.Info("Client subscribed to location updates", "request", req)
 
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(200 * time.Millisecond)
 	defer ticker.Stop()
 
 	ctx := stream.Context()

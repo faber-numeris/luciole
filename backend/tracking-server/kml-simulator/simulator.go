@@ -28,6 +28,9 @@ func LoadSimulatedPath() ([]model.Position, error) {
 		for _, placemark := range kml.Document.Placemarks {
 			coordStrings := extractCoordinatesFromPlacemark(placemark)
 			for _, coordString := range coordStrings {
+				if coordString == "" {
+					continue
+				}
 				coord, parseErr := parseCoordinateString(coordString)
 				if parseErr != nil {
 					return nil, parseErr
@@ -91,6 +94,10 @@ func extractCoordinatesFromPlacemark(placemark *Placemark) []string {
 }
 
 func parseCoordinateString(coordString string) (model.Position, error) {
+	if coordString == "" {
+		return model.Position{}, fmt.Errorf("empty coordinate string")
+	}
+
 	parts := strings.Split(coordString, ",")
 	if len(parts) < 2 {
 		return model.Position{}, fmt.Errorf("invalid coordinate: %q", coordString)

@@ -43,15 +43,15 @@ class TrackedObjectsViewModel @Inject constructor(
 
     fun listenForUpdates(clientID: String) {
 
-        val initialPosition = Position.newBuilder()
-            .setCoordinate(
-                Coordinate.newBuilder()
-                    .setLatitude(DEFAULT_COORDINATES.latitude)
-                    .setLongitude(DEFAULT_COORDINATES.longitude)
-                    .build()
-            )
-            .build()
-        addTrackedObject("object-1", initialPosition)
+//        val initialPosition = Position.newBuilder()
+//            .setCoordinate(
+//                Coordinate.newBuilder()
+//                    .setLatitude(DEFAULT_COORDINATES.latitude)
+//                    .setLongitude(DEFAULT_COORDINATES.longitude)
+//                    .build()
+//            )
+//            .build()
+//        addTrackedObject("object-1", initialPosition)
 
         viewModelScope.launch {
             val request = SubscribeLocationRequest.newBuilder()
@@ -61,10 +61,10 @@ class TrackedObjectsViewModel @Inject constructor(
             try {
                 // Collect the server-side stream
                 trackingStub.subscribeLocation(request).collect { response ->
-                    response.positionsList.forEach {
-                        updateObjectPosition(it.vehicleId, it)
+                    val updates = response.positionsList.associate {
+                        it.vehicleId to TrackedObject(it.vehicleId, it)
                     }
-
+                    _trackedObjects.value += updates
                 }
             } catch (e: Exception) {
                 // Handle gRPC errors (e.g., connection loss) here
