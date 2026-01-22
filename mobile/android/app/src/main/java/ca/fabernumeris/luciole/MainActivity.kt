@@ -4,101 +4,73 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
-import ca.fabernumeris.luciole.constants.DEFAULT_STYLE_URL
-import ca.fabernumeris.luciole.model.TrackedObject
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ca.fabernumeris.luciole.model.TrackedObjectsViewModel
+import ca.fabernumeris.luciole.model.UserStateViewModel
+import ca.fabernumeris.luciole.routes.Routes
+import ca.fabernumeris.luciole.ui.home.HomeScreen
+import ca.fabernumeris.luciole.ui.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
-import org.maplibre.android.MapLibre
-import org.maplibre.compose.camera.CameraPosition
-import org.maplibre.compose.camera.rememberCameraState
-import org.maplibre.compose.layers.CircleLayer
-import org.maplibre.compose.map.MaplibreMap
-import org.maplibre.compose.sources.GeoJsonData
-import org.maplibre.compose.sources.rememberGeoJsonSource
-import org.maplibre.compose.style.BaseStyle
-import org.maplibre.spatialk.geojson.Position
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
+    // Inject the HiltViewModels into the activity
     private val trackedObjectsViewModel: TrackedObjectsViewModel by viewModels()
+    private val userStateViewModel : UserStateViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        MapLibre.getInstance(this)
-
         setContent {
             val trackedObjects by trackedObjectsViewModel.trackedObjects.collectAsState()
-            MainMap(trackedObjects = trackedObjects)
-        }
-    }
-}
 
-@Composable
-fun MainMap(trackedObjects: Map<String, TrackedObject>) {
-    val cameraState = rememberCameraState(CameraPosition(
-        target = DEFAULT_COORDINATES,
-        zoom = 14.0,
-    ))
+            val navController = rememberNavController()
+            val isLoggedIn by userStateViewModel.isLoggedIn.collectAsState()
 
 
-    MaplibreMap(baseStyle = BaseStyle.Uri(
-            DEFAULT_STYLE_URL),
-        cameraState = cameraState,
-    ){
-        MarkerLayer(trackedObjects)
-    }
-}
+            LaunchedEffect(isLoggedIn) {
+                if (isLoggedIn) {
+                    navController.navigate(Routes.HOME){
+                        popUpTo(Routes.LOGIN){inclusive = true}
+                    }
+                } else {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.HOME) { inclusive = true }
+                    }
+                }
+            }
 
-private fun createPointFeature(position: Position): String {
-    return """
-        {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [${position.longitude}, ${position.latitude}]
+            NavHost(
+                navController = navController,
+                startDestination = Routes.LOGIN
+            ) {
+                composable(Routes.LOGIN) {
+                    LoginScreen(
+                        onLoginSuccess = { userStateViewModel.login("", "") }
+                    )
+                }
+                composable(Routes.HOME) {
+                    HomeScreen(
+                        onLogout = { userStateViewModel.logout() },
+                        trackedObjects = trackedObjects
+                    )
+                }
             }
         }
-    """.trimIndent()
-}
-
-@Composable
-private fun MarkerLayer(trackedObjects: Map<String, TrackedObject>) {
-
-    // Create a FeatureCollection with all tracked objects
-    val featuresJson = trackedObjects.values.joinToString(",") { obj ->
-        if (!obj.position.hasCoordinate()){
-            throw IllegalStateException("Object ${obj.id} has null coordinates")
-        }
-        val pos = Position(obj.position.coordinate.longitude, obj.position.coordinate.latitude)
-        createPointFeature(pos)
     }
-
-    val geoJsonString = """
-        {
-            "type": "FeatureCollection",
-            "features": [$featuresJson]
-        }
-    """.trimIndent()
-
-    val objectsSource = rememberGeoJsonSource(
-        data = GeoJsonData.JsonString(geoJsonString)
-    )
-
-    // Add a circle layer that will render all markers
-    CircleLayer(
-        id = "tracked-objects-markers",
-        source = objectsSource,
-    )
-
-
 }
+
+
+
+
 
 
 

@@ -17,6 +17,7 @@ protobuf = "4.33.4"
 grpc = "1.78.0"
 grpc-kotlin = "1.5.0"
 protobuf-plugin = "0.9.6"
+navigationCompose = "2.9.6"
 
 
 [libraries]
@@ -48,6 +49,7 @@ grpc-kotlin-stub = { module = "io.grpc:grpc-kotlin-stub", version.ref = "grpc-ko
 protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 protoc-gen-grpc-java = { module = "io.grpc:protoc-gen-grpc-java", version.ref = "grpc" }
 protoc-gen-grpc-kotlin = { module = "io.grpc:protoc-gen-grpc-kotlin", version.ref = "grpc-kotlin" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 
 [plugins]
