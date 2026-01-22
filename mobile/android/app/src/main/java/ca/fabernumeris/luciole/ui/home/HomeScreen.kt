@@ -1,8 +1,10 @@
 package ca.fabernumeris.luciole.ui.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import ca.fabernumeris.luciole.constants.DEFAULT_COORDINATES
 import ca.fabernumeris.luciole.constants.DEFAULT_STYLE_URL
@@ -23,10 +25,15 @@ fun HomeScreen(
     trackedObjects: Map<String, TrackedObject>,
     onLogout: () -> Unit) {
 
-    MapLibre.getInstance(LocalContext.current)
-    MainMap(trackedObjects)
-    Button(onClick = onLogout) {
-        Text("Logout")
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        MapLibre.getInstance(context)
+    }
+    Box {
+        MainMap(trackedObjects)
+        Button(onClick = onLogout) {
+            Text("Logout")
+        }
     }
 }
 
@@ -62,13 +69,12 @@ private fun createPointFeature(position: Position): String {
 private fun MarkerLayer(trackedObjects: Map<String, TrackedObject>) {
 
     // Create a FeatureCollection with all tracked objects
-    val featuresJson = trackedObjects.values.joinToString(",") { obj ->
-        if (!obj.position.hasCoordinate()){
-            throw IllegalStateException("Object ${obj.id} has null coordinates")
+    val featuresJson = trackedObjects.values
+        .filter { obj -> obj.position.hasCoordinate() }
+        .joinToString(",") { obj ->
+            val pos = Position(obj.position.coordinate.longitude, obj.position.coordinate.latitude)
+            createPointFeature(pos)
         }
-        val pos = Position(obj.position.coordinate.longitude, obj.position.coordinate.latitude)
-        createPointFeature(pos)
-    }
 
     val geoJsonString = """
         {
