@@ -1,92 +1,40 @@
-import { useState } from 'react'
+import React, {type PropsWithChildren} from 'react';
+import {FaUser} from "react-icons/fa";
+import {Link} from "react-router-dom";
 
-interface SidebarProps {
-  activeView: string
-  onViewChange: (view: string) => void
+
+interface SidebarProps extends PropsWithChildren{
+    sidebarOpen?: boolean;
 }
 
-export function Sidebar({ activeView, onViewChange }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
 
-  const menuItems = [
-    {
-      id: 'organizations',
-      label: 'Organizations',
-      icon: '🏢',
-      description: 'Manage organizations'
-    },
-    {
-      id: 'trackings',
-      label: 'Trackings',
-      icon: '📊',
-      description: 'View tracking data'
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      icon: '⚙️',
-      description: 'Application settings'
-    }
-  ]
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed)
-  }
-
-  return (
-    <aside className={`sidebar ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <div className="sidebar-header">
-        <div className="sidebar-brand">
-          <span className="sidebar-logo">🔥</span>
-          {!isCollapsed && <span className="sidebar-title">Luciole</span>}
-        </div>
-        <button 
-          className="sidebar-toggle"
-          onClick={toggleCollapse}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <span className={`toggle-icon ${isCollapsed ? 'toggle-icon-collapsed' : ''}`}>
-            ☰
-          </span>
-        </button>
-      </div>
-
-      <nav className="sidebar-nav">
-        <ul className="sidebar-menu">
-          {menuItems.map((item) => (
-            <li key={item.id}>
-              <button
-                className={`sidebar-menu-item ${activeView === item.id ? 'sidebar-menu-item-active' : ''}`}
-                onClick={() => onViewChange(item.id)}
-                title={isCollapsed ? item.description : undefined}
-              >
-                <span className="menu-item-icon">{item.icon}</span>
-                {!isCollapsed && (
-                  <div className="menu-item-content">
-                    <span className="menu-item-label">{item.label}</span>
-                    <span className="menu-item-description">{item.description}</span>
-                  </div>
-                )}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <div className="sidebar-footer">
-        {!isCollapsed && (
-          <div className="user-info">
-            <div className="user-avatar">👤</div>
-            <div className="user-details">
-              <span className="user-name">User</span>
-              <span className="user-email">user@example.com</span>
+const Sidebar: React.FC<SidebarProps> = ({sidebarOpen}: SidebarProps) => {
+    if (!sidebarOpen) return null;
+    return sidebarOpen && (
+        <section className="column sidebar">
+            <aside className="menu" style={{padding: '1rem', flex: 0.99}}>
+                <ul className="menu-list">
+                    <li><Link to="/dashboard/organizations">Organizations</Link></li>
+                    <li><Link to="/dashboard/settings">Settings</Link></li>
+                </ul>
+            </aside>
+            <div className="user-section">
+                <div className="avatar">
+                    <div className="avt-icon">
+                        <FaUser size={24} color="white"/>
+                    </div>
+                </div>
+                <div className="avatar-info">
+                    <p className="has-text-white">
+                        <strong style={{color: 'white'}}>John Doe</strong>
+                    </p>
+                    <button className="button is-primary" style={{marginTop: '0.5rem'}}>
+                        Logout
+                    </button>
+                </div>
             </div>
-          </div>
-        )}
-        {isCollapsed && (
-          <div className="user-avatar-collapsed">👤</div>
-        )}
-      </div>
-    </aside>
-  )
-}
+        </section>
+    )
+};
+
+export default Sidebar;
