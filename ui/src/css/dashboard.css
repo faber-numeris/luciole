@@ -1,0 +1,59 @@
+#dashboard {
+    display: block;
+    padding-top: 0;
+    padding-left: 0;
+}
+
+#dashboard aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16rem;
+    height: 100vh;
+    border-right: 1px solid var(--pico-muted-border-color);
+    padding: 1rem;
+}
+
+#dashboard .user-profile {
+    margin-bottom: 1rem;
+}
+
+#dashboard .user-profile li {
+    display: flex;
+    gap: 0.75rem;
+}
+
+#dashboard .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+}
+
+#dashboard .user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#dashboard .user-info small {
+    color: var(--pico-muted-color);
+}
+
+#dashboard section {
+    margin-left: 16rem;
+    padding: 1rem;
+}
+
+#dashboard article {
+    max-width: 100%;
+}
+
+
+#dashboard nav ul.navigation li a:hover {
+    display: block;
+    padding: 0.5rem;
+    background-color: var(--pico-primary-hover);
+    color: var(--pico-primary-inverse);
+    text-decoration: none;
+}
+
+
