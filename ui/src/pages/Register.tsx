@@ -2,12 +2,11 @@ import {Link, useNavigate} from 'react-router-dom'
 import * as React from "react";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { registerSchema, type RegisterFormData } from "../schemas/registerSchema";
 import TextInput from "../components/inputs/TextInput";
 import EmailInput from "../components/inputs/EmailInput";
 import PasswordInput from "../components/inputs/PasswordInput";
-import { api } from "../api/api";
-
 
 const defaultValues: RegisterFormData = {
     username: '',
@@ -22,7 +21,7 @@ const Register: React.FC = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors },
         setError,
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
@@ -30,19 +29,35 @@ const Register: React.FC = () => {
         mode: 'onTouched',
     });
 
-    const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
-        try {
-            await api.post(import.meta.env.VITE_AUTH_API_URL, data);
+    const mutation = useMutation({
+        mutationFn: async (data: RegisterFormData) => {
+            const response = await fetch(import.meta.env.VITE_AUTH_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        },
+        onSuccess: () => {
             console.log('Registration successful');
             navigate('/login');
-        } catch (error: any) {
+        },
+        onError: (error: any) => {
             console.error('Registration error:', error);
             setError('root', { 
                 type: 'manual', 
                 message: error.message || 'An unexpected error occurred. Please try again.' 
             });
-        }
-    };
+        },
+    });
+
+    const onSubmit: SubmitHandler<RegisterFormData>
+        = (data) => mutation.mutate(data);
+
 
     return (
         <main>
@@ -88,8 +103,8 @@ const Register: React.FC = () => {
                         {...register('confirmPassword')}
                     />
 
-                    <button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? 'Registering…' : 'Register'}
+                    <button type="submit" disabled={mutation.isPending}>
+                        {mutation.isPending ? 'Registering…' : 'Register'}
                     </button>
                 </form>
 
