@@ -1,6 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authApi } from './authApi';
 
+// TODO: Ensure a consistent data-fetching strategy.
+// Currently both RTK Query (here) and TanStack Query (in App.tsx) are present.
 export const store = configureStore({
     reducer: {
         [authApi.reducerPath]: authApi.reducer,

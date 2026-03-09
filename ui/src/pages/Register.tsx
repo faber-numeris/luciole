@@ -4,12 +4,10 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
 import { useRegisterMutation } from '../store/authApi';
-import TextInput from '../components/inputs/TextInput';
 import EmailInput from '../components/inputs/EmailInput';
 import PasswordInput from '../components/inputs/PasswordInput';
 
 const defaultValues: RegisterFormData = {
-    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -58,12 +56,6 @@ const Register: React.FC = () => {
                             {errors.root.message}
                         </p>
                     )}
-                    <TextInput
-                        label="Username"
-                        placeholder="Username"
-                        error={errors.username}
-                        {...formRegister('username')}
-                    />
 
                     <EmailInput
                         label="Email"
