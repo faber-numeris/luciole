@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { reducer as notificationsReducer } from 'reapop';
+import notificationReducer from './notificationSlice';
 import { authApi } from './authApi';
 
 export const store = configureStore({
     reducer: {
-        notifications: notificationsReducer(),
+        notification: notificationReducer,
         [authApi.reducerPath]: authApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

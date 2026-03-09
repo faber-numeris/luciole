@@ -6,6 +6,10 @@
 :root {
   --pico-font-family: 'Roboto', system-ui, sans-serif;
   --pico-font-weight: 300;
+  /* Sync react-toastify success color with application primary color if desired */
+  /* Or just override the progress bar color to match the orange theme */
+  --toastify-color-progress-success: #ff7f00; /* Match Pico orange primary if possible */
+  --toastify-icon-color-success: #ff7f00;
 }
 
 body {

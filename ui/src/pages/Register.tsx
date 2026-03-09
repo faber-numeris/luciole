@@ -2,7 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import * as React from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNotifications } from 'reapop';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../store/notificationSlice';
 import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
 import { useRegisterMutation } from '../store/authApi';
 import EmailInput from '../components/inputs/EmailInput';
@@ -16,7 +17,7 @@ const defaultValues: RegisterFormData = {
 
 const Register: React.FC = () => {
     const navigate = useNavigate();
-    const { notify } = useNotifications();
+    const dispatch = useDispatch();
     const [register, { isLoading }] = useRegisterMutation();
     const {
         register: formRegister,
@@ -32,10 +33,11 @@ const Register: React.FC = () => {
     const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
         try {
             await register(data).unwrap();
-            notify(`A confirmation email was sent to ${data.email}.`, 'success', {
-                title: 'Registration Successful',
-                dismissAfter: 5000,
-            });
+            dispatch(addNotification({
+                id: Date.now().toString(),
+                message: `A confirmation email was sent to ${data.email}.`,
+                type: 'success'
+            }));
             navigate('/login');
         } catch (error: unknown) {
             const err = error as { data?: { message?: string }; status?: number };
