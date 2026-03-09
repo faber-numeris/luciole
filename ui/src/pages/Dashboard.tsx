@@ -1,5 +1,7 @@
 import {Link} from 'react-router-dom'
 
+// TODO: Refactor common dashboard structure (sidebar/nav) into a SidebarLayout component.
+// TODO: Replace hardcoded user profile and company info with data from Redux/API.
 export default function Dashboard() {
   return (
     <main id="dashboard">

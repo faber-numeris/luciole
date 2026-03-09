@@ -1,7 +1,5 @@
 import {z} from 'zod';
 
-const username = z.string().min(2, 'Username must be at least 2 characters');
-
 const email = z.email('Please enter a valid email address');
 
 const password = z
@@ -11,7 +9,6 @@ const password = z
 
 
 export const registerSchema = z.object({
-    username: username,
     email: email,
     password: password,
     confirmPassword: password,

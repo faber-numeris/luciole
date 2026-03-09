@@ -1,5 +1,7 @@
 import {Link, useNavigate} from 'react-router-dom'
 
+// TODO: Refactor to use react-hook-form and zod for consistency with Register.tsx.
+// TODO: Use TextInput and PasswordInput components from components/inputs/ for shared styling and error handling.
 export default function Login() {
     const navigate = useNavigate()
 
