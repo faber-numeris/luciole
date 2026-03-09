@@ -1,12 +1,12 @@
-import {Link, useNavigate} from 'react-router-dom'
-import * as React from "react";
-import {type SubmitHandler, useForm} from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { registerSchema, type RegisterFormData } from "../schemas/registerSchema";
-import TextInput from "../components/inputs/TextInput";
-import EmailInput from "../components/inputs/EmailInput";
-import PasswordInput from "../components/inputs/PasswordInput";
+import { Link, useNavigate } from 'react-router-dom';
+import * as React from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
+import { useRegisterMutation } from '../store/authApi';
+import TextInput from '../components/inputs/TextInput';
+import EmailInput from '../components/inputs/EmailInput';
+import PasswordInput from '../components/inputs/PasswordInput';
 
 const defaultValues: RegisterFormData = {
     username: '',
@@ -15,49 +15,32 @@ const defaultValues: RegisterFormData = {
     confirmPassword: '',
 };
 
-
 const Register: React.FC = () => {
     const navigate = useNavigate();
+    const [register, { isLoading }] = useRegisterMutation();
     const {
-        register,
+        register: formRegister,
         handleSubmit,
         formState: { errors },
         setError,
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
-        defaultValues: defaultValues,
+        defaultValues,
         mode: 'onTouched',
     });
 
-    const mutation = useMutation({
-        mutationFn: async (data: RegisterFormData) => {
-            const response = await fetch(import.meta.env.VITE_AUTH_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        },
-        onSuccess: () => {
-            console.log('Registration successful');
+    const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+        try {
+            await register(data).unwrap();
             navigate('/login');
-        },
-        onError: (error: any) => {
-            console.error('Registration error:', error);
-            setError('root', { 
-                type: 'manual', 
-                message: error.message || 'An unexpected error occurred. Please try again.' 
+        } catch (error: unknown) {
+            const err = error as { data?: { message?: string }; status?: number };
+            setError('root', {
+                type: 'manual',
+                message: err.data?.message || 'An unexpected error occurred. Please try again.',
             });
-        },
-    });
-
-    const onSubmit: SubmitHandler<RegisterFormData>
-        = (data) => mutation.mutate(data);
-
+        }
+    };
 
     return (
         <main>
@@ -79,32 +62,32 @@ const Register: React.FC = () => {
                         label="Username"
                         placeholder="Username"
                         error={errors.username}
-                        {...register('username')}
+                        {...formRegister('username')}
                     />
 
                     <EmailInput
                         label="Email"
                         placeholder="email@example.com"
                         error={errors.email}
-                        {...register('email')}
+                        {...formRegister('email')}
                     />
 
                     <PasswordInput
                         label="Password"
                         placeholder="Password"
                         error={errors.password}
-                        {...register('password')}
+                        {...formRegister('password')}
                     />
 
                     <PasswordInput
                         label="Confirm Password"
                         placeholder="Confirm password"
                         error={errors.confirmPassword}
-                        {...register('confirmPassword')}
+                        {...formRegister('confirmPassword')}
                     />
 
-                    <button type="submit" disabled={mutation.isPending}>
-                        {mutation.isPending ? 'Registering…' : 'Register'}
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Registering…' : 'Register'}
                     </button>
                 </form>
 
