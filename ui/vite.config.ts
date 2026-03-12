@@ -12,5 +12,6 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-  },
+    sourcemapIgnoreList: false, // help the debugger map the files
+  }
 })
