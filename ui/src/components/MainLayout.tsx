@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import NotificationHandler from './NotificationHandler';
+import NotificationHandler from '@/components/NotificationHandler';
 
 const MainLayout: React.FC = () => {
   return (

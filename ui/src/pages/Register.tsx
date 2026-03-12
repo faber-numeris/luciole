@@ -1,13 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import * as React from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm, type FieldError } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch } from 'react-redux';
-import { addNotification } from '../store/notificationSlice';
-import { registerSchema, type RegisterFormData } from '../schemas/registerSchema';
-import { useRegisterMutation } from '../store/authApi';
-import EmailInput from '../components/inputs/EmailInput';
-import PasswordInput from '../components/inputs/PasswordInput';
+import { addNotification } from '@/store/notificationSlice';
+import { registerSchema, type RegisterFormData } from '@/schemas/registerSchema';
+import { useRegisterMutation } from '@/store/authnApi';
+import { EmailInput, PasswordInput } from '@/components/inputs/';
 
 const defaultValues: RegisterFormData = {
     email: '',
@@ -68,21 +67,21 @@ const Register: React.FC = () => {
                     <EmailInput
                         label="Email"
                         placeholder="email@example.com"
-                        error={errors.email}
+                        error={errors.email as FieldError}
                         {...formRegister('email')}
                     />
 
                     <PasswordInput
                         label="Password"
                         placeholder="Password"
-                        error={errors.password}
+                        error={errors.password as FieldError}
                         {...formRegister('password')}
                     />
 
                     <PasswordInput
                         label="Confirm Password"
                         placeholder="Confirm password"
-                        error={errors.confirmPassword}
+                        error={errors.confirmPassword as FieldError}
                         {...formRegister('confirmPassword')}
                     />
 

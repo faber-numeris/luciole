@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { type RootState } from '../store';
-import { clearNotification } from '../store/notificationSlice';
+import { type RootState } from '@/store';
+import { clearNotification } from '@/store/notificationSlice';
 
 const NotificationHandler: React.FC = () => {
   const dispatch = useDispatch();
