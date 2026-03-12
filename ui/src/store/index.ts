@@ -1,14 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
-import notificationReducer from './notificationSlice';
-import { authApi } from './authApi';
+import notificationReducer from '@/store/notificationSlice';
+import { authnApi } from '@/store/authnApi';
+
+
 
 export const store = configureStore({
     reducer: {
         notification: notificationReducer,
-        [authApi.reducerPath]: authApi.reducer,
+        [authnApi.reducerPath]: authnApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(authApi.middleware),
+        getDefaultMiddleware().concat(authnApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
